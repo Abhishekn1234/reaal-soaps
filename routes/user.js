@@ -2,15 +2,26 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const LoginDetail = require('../models/logindetail');
+const session = require('express-session');
 
 const router = express.Router();
 const JWT_SECRET = 'your_jwt_secret';
+
+
+router.use(session({
+    secret: 'your_secret_key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } 
+}));
 
 router.get('/generate-code', (req, res) => {
     const securityCode = Math.floor(100000 + Math.random() * 900000).toString();
     req.session.securityCode = securityCode;
     res.json({ securityCode });
 });
+
 router.post('/register', async (req, res) => {
     const { username, password } = req.body;
 
@@ -58,7 +69,25 @@ router.post('/login', async (req, res) => {
         }
 
         const token = jwt.sign({ userId: user._id }, JWT_SECRET);
+
+      
+        const loginDetailCount = await LoginDetail.countDocuments();
+        const isRebirth = (loginDetailCount + 1) % 5 === 0;
+        const loginDetail = new LoginDetail({ username, rebirth: isRebirth });
+        await loginDetail.save();
+
         res.json({ token });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
+router.get('/login-details', async (req, res) => {
+    try {
+        const loginDetails = await LoginDetail.find().sort({ loginTime: -1 }).limit(50);
+        res.json(loginDetails);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
