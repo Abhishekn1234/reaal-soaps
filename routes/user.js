@@ -6,13 +6,21 @@ const User = require('../models/user');
 const router = express.Router();
 const JWT_SECRET = 'your_jwt_secret';
 
-
 router.get('/generate-code', (req, res) => {
-    const securityCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const screenSize = req.query.screenSize;
+    let securityCode;
+
+    if (screenSize === 'small') {
+        
+        securityCode = Math.floor(10000 + Math.random() * 90000).toString();
+    } else {
+        
+        securityCode = Math.floor(100000 + Math.random() * 900000).toString();
+    }
+
     req.session.securityCode = securityCode;
     res.json({ securityCode });
 });
-
 
 router.post('/register', async (req, res) => {
     const { username, password } = req.body;
@@ -38,7 +46,6 @@ router.post('/register', async (req, res) => {
     }
 });
 
-
 router.post('/login', async (req, res) => {
     const { username, password, securityCode } = req.body;
 
@@ -61,7 +68,7 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ message: 'Invalid username or password' });
         }
 
-        const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ userId: user._id }, JWT_SECRET);
         res.json({ token });
     } catch (error) {
         console.error(error);
