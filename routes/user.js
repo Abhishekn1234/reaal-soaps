@@ -7,21 +7,10 @@ const router = express.Router();
 const JWT_SECRET = 'your_jwt_secret';
 
 router.get('/generate-code', (req, res) => {
-    const screenSize = req.query.screenSize;
-    let securityCode;
-
-    if (screenSize === 'small') {
-        
-        securityCode = Math.floor(10000 + Math.random() * 90000).toString();
-    } else {
-        
-        securityCode = Math.floor(100000 + Math.random() * 900000).toString();
-    }
-
+    const securityCode = Math.floor(100000 + Math.random() * 900000).toString();
     req.session.securityCode = securityCode;
     res.json({ securityCode });
 });
-
 router.post('/register', async (req, res) => {
     const { username, password } = req.body;
 
