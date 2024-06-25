@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const authRoutes = require('./routes/user');
-
+const mongo="mongodb://localhost:27017/myloginapp"
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -16,7 +16,7 @@ app.use(session({
 }));
 
 
-mongoose.connect('mongodb://localhost:27017/myloginapp', {
+mongoose.connect(mongo, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => console.log('MongoDB connected'))
