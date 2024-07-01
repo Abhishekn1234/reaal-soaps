@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Details</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h2 class="mt-5">Login Details</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Mobile Number</th>
+                    <th>Member ID</th>
+                    <th>Left Customer</th>
+                    <th>Right Customer</th>
+                    <th>Amount</th>
+                    <th>Income</th>
+                    <th>Rebirth</th>
+                    <th>Count</th>
+                    <th>Serial No.</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody id="loginDetailsTableBody">
+                <!-- Rows will be appended here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $.get('/login-details', function(data) {
+                const tableBody = $('#loginDetailsTableBody');
+                data.forEach(detail => {
+                    const row = `
+                        <tr>
+                            <td>${detail.mobileNumber}</td>
+                            <td>${detail.memberId}</td>
+                            <td>${detail.leftCustomer}</td>
+                            <td>${detail.rightCustomer}</td>
+                            <td>${detail.amount}</td>
+                            <td>${detail.income}</td>
+                            <td>${detail.rebirth}</td>
+                            <td>${detail.count}</td>
+                            <td>${detail.siNo}</td>
+                            <td>${detail.formattedDate}</td>
+                        </tr>
+                    `;
+                    tableBody.append(row);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
